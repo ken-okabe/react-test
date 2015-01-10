@@ -80,12 +80,13 @@ var httpServer = function(dir)
   });
 };
 
-path = require('path');
 
+var port = 9999;
+var dir = 'www';
 var HTTPserver =
-  httpServer(path
-    .join(__dirname, 'www'))
-  .listen(9999, function()
+  httpServer(require('path')
+    .join(__dirname,  dir))
+  .listen(port, function()
   {
-    console.log('HTTP listening 9999');
+    console.log('HTTP listening ' + port);
   });
