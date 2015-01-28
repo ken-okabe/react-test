@@ -2,9 +2,9 @@ var port = 9999;
 var directory = 'www';
 
 var http = require('http');
-var fs = require('fs');
-var path = require("path");
 var url = require('url');
+var path = require("path");
+var fs = require('fs');
 
 var mimeTypes = {
   "html": "text/html",
@@ -21,8 +21,8 @@ var mimeTypes = {
 var component = http
   .createServer(function(req, res)
   {
-    var dir = path.join(__dirname, directory);
     var uri = url.parse(req.url).pathname;
+    var dir = path.join(__dirname, directory);
     var filepath = path.join(dir, unescape(uri));
     var indexfilepath = path.join(dir, unescape('index.html'));
 
