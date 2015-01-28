@@ -1,24 +1,29 @@
-var _natural = Immutable.Range();//natural numbers (inifinite sequence)
-var it = _natural.values(); //iterator of the sequence
+var Component = React.createClass(
+  {
+    getInitialState: function()
+    { // 表計算アプリのマス目に相当する
+      return {
+        a: undefined,
+        b: undefined
+      };
+    },
+    handleChange: function(event)
+    {
+      var a = event.target.value * 1; // aのマス目の値
 
-var Timer = React.createClass({
-  getInitialState: function() {
-    return {tickValue: it.next().value}; //iterator next
-  },
-  tick: function() {
-    this.setState({tickValue: it.next().value}); //iterator next
-  },
-  componentDidMount: function() {
-    this.interval = setInterval(this.tick, 0);// tick 0
-  },
-  componentWillUnmount: function() {
-    clearInterval(this.interval);
-  },
-  render: function() {
-    return (
-      <div>Value: {this.state.tickValue}</div>
-    );
-  }
-});
+      this.setState(
+        {
+          b: a * 5  // bのマス目の値は、aのマス目の値の5倍と等しい
+        });
+      },
+      render: function()
+      { // aのマス目の値を監視すると同時に
+        return <div>
+        <input type="text" onChange={this.handleChange} />
+        <input type="text" value={this.state.b} />
+        </div>;
+      }　// bのマス目はリアクティブに再計算され
+    });
 
-React.render(<Timer />, document.body);  //bind logic and hardware
+    React.render( <Component/> , document.body);
+    // 自動的に再描画される!!

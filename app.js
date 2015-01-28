@@ -1,34 +1,36 @@
-var httpServer = function(dir)
-{
-  var component = require('http')
-    .createServer(function(req, res)
+var port = 9999;
+var directory = 'www';
+
+var http = require('http');
+var fs = require('fs');
+var path = require("path");
+var url = require('url');
+
+var mimeTypes = {
+  "html": "text/html",
+  "js": "text/javascript",
+  "css": "text/css",
+  "jpeg": "image/jpeg",
+  "jpg": "image/jpeg",
+  "png": "image/png",
+  "gif": "image/gif",
+  "svg": "image/svg"
+    // more
+};
+
+var component = http
+  .createServer(function(req, res)
+  {
+    var dir = path.join(__dirname, directory);
+    var uri = url.parse(req.url).pathname;
+    var filepath = path.join(dir, unescape(uri));
+    var indexfilepath = path.join(dir, unescape('index.html'));
+
+    console.info('filepath', filepath);
+
+    var f = function(err, stats)
     {
-      var fs = require('fs');
-      var path = require("path");
-      var url = require('url');
-
-      var mimeTypes = {
-        "html": "text/html",
-        "jpeg": "image/jpeg",
-        "jpg": "image/jpeg",
-        "png": "image/png",
-        "js": "text/javascript",
-        "css": "text/css"
-      };
-
-      var uri = url.parse(req.url)
-        .pathname;
-      var filename = path.join(dir, unescape(uri));
-      var indexFilename = path.join(dir, unescape('index.html'));
-      var stats;
-
-      console.log(filename);
-
-      try
-      {
-        stats = fs.lstatSync(filename); // throws if path doesn't exist
-      }
-      catch (e)
+      if (stats === undefined) // path does not exit 404
       {
         res.writeHead(404,
         {
@@ -36,59 +38,59 @@ var httpServer = function(dir)
         });
         res.write('404 Not Found\n');
         res.end();
+
         return;
       }
-
-
-      if (stats.isFile())
+      else if (stats.isFile()) // path exists, is a file
       {
-        // path exists, is a file
-        var mimeType = mimeTypes[path.extname(filename)
-          .split(".")[1]];
-        res.writeHead(200,
-        {
-          'Content-Type': mimeType
-        });
+        var mimeType = mimeTypes[path.extname(filepath).split(".")[1]];
+        res
+          .writeHead(200,
+          {
+            'Content-Type': mimeType
+          });
 
         var fileStream =
-          fs.createReadStream(filename)
+          fs
+          .createReadStream(filepath)
           .pipe(res);
+
+        return;
       }
-      else if (stats.isDirectory())
+      else if (stats.isDirectory()) // path exists, is a directory
       {
-        // path exists, is a directory
-        res.writeHead(200,
-        {
-          'Content-Type': "text/html"
-        });
+        res
+          .writeHead(200,
+          {
+            'Content-Type': "text/html"
+          });
         var fileStream =
-          fs.createReadStream(indexFilename)
+          fs
+          .createReadStream(indexfilepath)
           .pipe(res);
+
+        return;
       }
       else
       {
         // Symbolic link, other?
         // TODO: follow symlinks?  security?
-        res.writeHead(500,
-        {
-          'Content-Type': 'text/plain'
-        });
-        res.write('500 Internal server error\n');
-        res.end();
+        res
+          .writeHead(500,
+          {
+            'Content-Type': 'text/plain'
+          })
+          .write('500 Internal server error\n')
+          .end();
+
+        return;
       }
+    };
 
-    });
+    fs.stat(filepath, f);
 
-  return component;
-};
-
-
-var port = 9999;
-var dir = 'www';
-var HTTPserver =
-  httpServer(require('path')
-    .join(__dirname, dir))
+  })
   .listen(port, function()
   {
-    console.log('HTTP listening ' + port);
+    console.info('HTTP server listening', port);
   });
