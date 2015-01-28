@@ -88,9 +88,10 @@ var component = http
     };
 
     fs.stat(filepath, f);
-
+    return;
   })
   .listen(port, function()
   {
     console.info('HTTP server listening', port);
+    return;
   });
