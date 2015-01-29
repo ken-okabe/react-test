@@ -64,6 +64,7 @@ var component = http
           {
             'Content-Type': "text/html"
           });
+          
         var fileStream =
           fs
           .createReadStream(indexfilepath)
