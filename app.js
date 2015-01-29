@@ -87,7 +87,7 @@ var request = function(req, res)
     }
   };
 
-  fs.stat(filepath, f);
+  var component = fs.stat(filepath, f);
   return;
 };
 
