@@ -26,4 +26,4 @@ var Component = React.createClass(
     });
 
 var react1 = React.render( <Component/> , document.body);
-    // 自動的に再描画される!!
+    // リアクティブに自動的にスクリーンに再描画される!!
