@@ -25,5 +25,5 @@ var Component = React.createClass(
       }　// bのマス目はリアクティブに再計算され
     });
 
-    React.render( <Component/> , document.body);
+var react1 = React.render( <Component/> , document.body);
     // 自動的に再描画される!!
